@@ -15,7 +15,9 @@ const std::size_t N = 10;
 void print_vec(std::unique_ptr<std::vector<float>> vec) { for (std::size_t i = 0; i < vec->size(); ++i) std::cerr << (*vec)[i] << ", "; std::cerr << '\n'; }
 void print_vec(std::shared_ptr<std::vector<float>> vec) { for (std::size_t i = 0; i < vec->size(); ++i) std::cerr << (*vec)[i] << ", "; std::cerr << '\n'; }
 void print_vec(std::vector<float> *vec) { for (std::size_t i = 0; i < vec->size(); ++i) std::cerr << (*vec)[i] << ", "; std::cerr << '\n'; }
-void print_vec(float *vec) { for (std::size_t i = 0; i < N; ++i) std::cerr << vec[i] << ", "; std::cerr << '\n'; }
+
+void print_vec_raw1(float *vec) { for (std::size_t i = 0; i < N; ++i) std::cerr << vec[i] << ", "; std::cerr << '\n'; }
+void print_vec_raw2(nonull_ptr<float> vec) { for (std::size_t i = 0; i < N; ++i) std::cerr << vec[i] << ", "; std::cerr << '\n'; }
 
 int main()
 {
@@ -81,10 +83,14 @@ int main()
 	print_vec(std::move(upvec));
 	print_vec(spvec);
 	
+	print_vec_raw1(rvec);
+	print_vec_raw2(rvec);
+
 	std::cerr << '\n';
 
-	nonull<void(*)(const std::string&)> fp1 = print_msg;
-	fp1 = print_msg;
+	constexpr nonull<void(*)(const std::string&)> fp1 = print_msg;
+	constexpr void(*_fp1)(const std::string&) = print_msg;
+	//fp1 = print_msg;
 
 	nonull_ptr<void(const std::string&)> fp2 = print_msg;
 	fp2 = print_msg;

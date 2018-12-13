@@ -44,13 +44,13 @@ public: // -- value ctor/asgn -- //
 	nonull &operator=(std::nullptr_t) = delete;
 
 	template<typename U>
-	nonull(U &&new_value) : value(std::forward<U>(new_value))
+	constexpr nonull(U &&new_value) : value(std::forward<U>(new_value))
 	{
 		if (value == nullptr) throw std::invalid_argument("nonull wrapper was constructed null");
 	}
 	
 	template<typename U>
-	nonull &operator=(U &&new_value)
+	constexpr nonull &operator=(U &&new_value)
 	{
 		value = std::forward<U>(new_value);
 		if (value == nullptr) throw std::invalid_argument("nonull wrapper was assigned null");
@@ -60,20 +60,20 @@ public: // -- value ctor/asgn -- //
 public: // -- value access -- //
 
 	template<typename U = T, typename std::enable_if<std::is_same<T, U>::value && std::is_convertible<const T&, T>::value, int>::type = 0>
-	operator T() const& { return value; }
+	constexpr operator T() const& { return value; }
 	template<typename U = T, typename std::enable_if<std::is_same<T, U>::value && std::is_convertible<T&&, T>::value, int>::type = 0>
-	operator T() && { return std::move(value); }
+	constexpr operator T() && { return std::move(value); }
 
-	typename std::conditional<std::is_pointer<T>::value, T, const T&>::type
+	constexpr typename std::conditional<std::is_pointer<T>::value, T, const T&>::type
 		operator->() const { return value; }
 
-	decltype(auto) operator*() const { return *value; }
+	constexpr decltype(auto) operator*() const { return *value; }
 
 	template<typename U>
-	decltype(auto) operator[](U &&arg) const { return value[std::forward<U>(arg)]; }
+	constexpr decltype(auto) operator[](U &&arg) const { return value[std::forward<U>(arg)]; }
 
 	template<typename ...Args>
-	decltype(auto) operator()(Args &&...args) const { return value(std::forward<Args>(args)...); }
+	constexpr decltype(auto) operator()(Args &&...args) const { return value(std::forward<Args>(args)...); }
 };
 
 // defines a nonull wrapper for a raw pointer
